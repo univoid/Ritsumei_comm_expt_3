@@ -59,7 +59,7 @@ public class ImageProcess extends Applet
 	public void threshold(int thres)
 	{
 		int cnt = 0, x, y, value;
-		int	white = 0xFFFFFFFF;
+		int white = 0xFFFFFFFF;
 		int black = 0xFF000000;
 
 		for (y = 0; y < HEIGHT; y++) 
@@ -77,11 +77,37 @@ public class ImageProcess extends Applet
 		imageOutput1 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput1,0,WIDTH));
 		imageOutput2 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput2,0,WIDTH));
 	}
+	
+	//3.7 doing
+	public void contrast(int thres)
+	{
+		int cnt = 0, x, y, value;
+		int white = 0xFFFFFFFF;
+		int black = 0xFF000000;
+
+		for (y = 0; y < HEIGHT; y++) 
+		{
+			for (x = 0; x < WIDTH; x++) 
+			{
+				value = RGBtoGray(pixelInput[y*WIDTH + x]);
+				pixelOutput3[y*WIDTH + x] = 0xFF000000 + value * 0x00010101;
+				if (value > thres)
+					pixelOutput1[y*WIDTH + x] = white;
+				else 
+					pixelOutput1[y*WIDTH + x] = black;
+			}
+		}
+		imageOutput3 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput1,0,WIDTH));
+		
+	}
 
 	public void init()
 	{
 		loadImage("image.GIF");
 		threshold(127);
+		//threshold(255);
+		//threshold(200);
+		//threshold(64);
 		repaint();
 	}
 
@@ -90,5 +116,6 @@ public class ImageProcess extends Applet
 		g.drawImage(imageInput, 30, 30, this);
 		g.drawImage(imageOutput2, 30, 50+HEIGHT, this);
 		g.drawImage(imageOutput1, 30, 70+HEIGHT+HEIGHT, this);
+		g.drawImage(imageOutput3, 30, 70+HEIGHT * 3, this);
 	}
 }

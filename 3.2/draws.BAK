@@ -4,7 +4,7 @@
 </HEAD>
 <BODY>
 
-<applet code='Draws.class' width=1000 height=500>
+<applet code='Draws.class' width=1000 height=300>
 </applet>
 
 </BODY>
