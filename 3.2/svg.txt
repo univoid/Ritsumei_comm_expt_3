@@ -1,0 +1,4 @@
+line(10, 10, 160, 170 ) RED
+Oval(50, 70, 90, 90) GREEN
+Rect(130, 110, 40, 60) BLUE
+String("demonstration", 20, 30, BOLD, 25) ORANGE
