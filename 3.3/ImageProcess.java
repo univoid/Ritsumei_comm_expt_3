@@ -7,9 +7,8 @@ import java.applet.Applet;
 public class ImageProcess extends Applet
 {
 	int WIDTH, HEIGHT;
-	Image imageInput,imageOutput1, imageOutput2;
-	int[] pixelInput, pixelOutput1, pixelOutput2;
-
+	Image imageInput,imageOutput1, imageOutput2, imageOutput3;
+	int[] pixelInput, pixelOutput1, pixelOutput2, pixelOutput3;
 	public void loadImage(String s)
 	{
 		MediaTracker mt;
@@ -19,7 +18,7 @@ public class ImageProcess extends Applet
 		mt.addImage(imageInput,0);	
 		try 
 		{ 
-			mt.waitForID(0); // âÊëúÇ™ì«Ç›çûÇ‹ÇÍÇÈÇ‹Ç≈ë“Ç¬
+			mt.waitForID(0); // ÔøΩÊëúÔøΩÔøΩÔøΩ«Ç›çÔøΩÔøΩ‹ÇÔøΩÔøΩ‹Ç≈ë“ÇÔøΩ
 		} 
 		catch (InterruptedException e)
 		{
@@ -33,6 +32,7 @@ public class ImageProcess extends Applet
 		pixelInput  = new int[WIDTH * HEIGHT];
 		pixelOutput1 = new int[WIDTH * HEIGHT];
 		pixelOutput2 = new int[WIDTH * HEIGHT];
+		pixelOutput3 = new int[WIDTH * HEIGHT];
 
 		PixelGrabber pg = new PixelGrabber(imageInput, 0, 0, WIDTH, HEIGHT, pixelInput, 0, WIDTH);
 		try 
@@ -78,8 +78,8 @@ public class ImageProcess extends Applet
 		imageOutput2 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput2,0,WIDTH));
 	}
 	
-	//3.7 doing
-	public void contrast(int thres)
+	//3.8 done
+	public void contrast(int a, int b)
 	{
 		int cnt = 0, x, y, value;
 		int white = 0xFFFFFFFF;
@@ -90,24 +90,28 @@ public class ImageProcess extends Applet
 			for (x = 0; x < WIDTH; x++) 
 			{
 				value = RGBtoGray(pixelInput[y*WIDTH + x]);
-				pixelOutput3[y*WIDTH + x] = 0xFF000000 + value * 0x00010101;
-				if (value > thres)
-					pixelOutput1[y*WIDTH + x] = white;
-				else 
-					pixelOutput1[y*WIDTH + x] = black;
+				if (value > b)
+					pixelOutput3[y*WIDTH + x] = white;
+				else if (value < a)
+					pixelOutput3[y*WIDTH + x] = black;
+				else
+					pixelOutput3[y*WIDTH + x] = (value * 255/150 * 0x00010101) + 0xFF000000;
+
 			}
 		}
-		imageOutput3 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput1,0,WIDTH));
-		
+		imageOutput3 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput3,0,WIDTH));
 	}
 
 	public void init()
 	{
 		loadImage("image.GIF");
 		threshold(127);
+		//3.6 done
 		//threshold(255);
 		//threshold(200);
 		//threshold(64);
+		//3.8 done
+		contrast(50, 200);
 		repaint();
 	}
 
@@ -116,6 +120,6 @@ public class ImageProcess extends Applet
 		g.drawImage(imageInput, 30, 30, this);
 		g.drawImage(imageOutput2, 30, 50+HEIGHT, this);
 		g.drawImage(imageOutput1, 30, 70+HEIGHT+HEIGHT, this);
-		g.drawImage(imageOutput3, 30, 70+HEIGHT * 3, this);
+		g.drawImage(imageOutput3, 30, 90+HEIGHT+HEIGHT+HEIGHT, this);
 	}
 }
