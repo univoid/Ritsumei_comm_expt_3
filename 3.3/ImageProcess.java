@@ -1,15 +1,14 @@
-/* sample 3.3 */
 import java.awt.*;
 import java.awt.image.*;
 import java.applet.Applet;
 import java.util.Arrays;
 
 
-public class Process extends Applet
+public class ImageProcess extends Applet
 {
 	int WIDTH, HEIGHT;
-	Image imageInput,imageOutput1, imageOutput2, imageOutput3, imageOutput4, imageOutput5;
-	int[] pixelInput, pixelOutput1, pixelOutput2, pixelOutput3, pixelOutput4, pixelOutput5;
+	Image imageInput,imageOutput1, imageOutput2, imageOutput3, imageOutput4, imageOutput5, imageOutput6;
+	int[] pixelInput, pixelOutput1, pixelOutput2, pixelOutput3, pixelOutput4, pixelOutput5, pixelOutput6;
 	public void loadImage(String s)
 	{
 		MediaTracker mt;
@@ -36,6 +35,7 @@ public class Process extends Applet
 		pixelOutput3 = new int[WIDTH * HEIGHT];
         pixelOutput4 = new int[WIDTH * HEIGHT];
         pixelOutput5 = new int[WIDTH * HEIGHT];
+        pixelOutput6 = new int[WIDTH * HEIGHT];
 
 		PixelGrabber pg = new PixelGrabber(imageInput, 0, 0, WIDTH, HEIGHT, pixelInput, 0, WIDTH);
 		try
@@ -184,6 +184,43 @@ public class Process extends Applet
 		imageOutput5 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput5,0,WIDTH));
 	}
 
+    //tyousen7 done
+    public void gradient()
+	{
+		int cnt = 0, x, y, value;
+		int white = 0xFFFFFFFF;
+		int black = 0xFF000000;
+        int[][] t = new int[WIDTH][HEIGHT];
+        for (y = 0; y < HEIGHT; y++)
+        {
+            for (x = 0; x < WIDTH; x++)
+            {
+                t[x][y] = RGBtoGray(pixelInput[y*WIDTH + x]);
+
+            }
+        }
+        //sobel
+		for (y = 0; y < HEIGHT; y++)
+		{
+			for (x = 0; x < WIDTH; x++)
+			{
+                if ((x > 0)&&(y > 0)&&(x < WIDTH-1)&&(y < HEIGHT-1))
+                {
+                    int uf, vf;
+                    uf = Math.abs(t[x-1][y-1] + t[x-1][y] * 2 + t[x-1][y+1] - t[x+1][y-1] - t[x+1][y] * 2 - t[x+1][y+1]);
+                    vf = Math.abs(t[x-1][y-1] + t[x][y-1] * 2 + t[x+1][y-1] - t[x-1][y+1] - t[x][y+1] * 2 - t[x+1][y+1]);
+                    pixelOutput6[y*WIDTH + x] = (uf + vf)* 0x00010101 + 0xFF000000;
+                }else
+                {
+                    pixelOutput6[y*WIDTH + x] = t[x][y]* 0x00010101 + 0xFF000000;
+
+                }
+
+            }
+        }
+		imageOutput6 = createImage(new MemoryImageSource(WIDTH, HEIGHT, pixelOutput6,0,WIDTH));
+	}
+
 	public void init()
 	{
 		//loadImage("image.GIF");
@@ -194,11 +231,13 @@ public class Process extends Applet
 		//threshold(200);
 		//threshold(64);
 		//3.8 done
-		contrast(50, 200);
+		//contrast(50, 200);
         //3.9 done
         weight();
         //tyousen6 done
         median();
+        //tyousen7 done
+        gradient();
 		repaint();
 	}
 
@@ -207,6 +246,7 @@ public class Process extends Applet
 		g.drawImage(imageInput, 30, 30, this);
 		g.drawImage(imageOutput4, 30, 50+HEIGHT, this);
         g.drawImage(imageOutput5, 50 + WIDTH, 50+HEIGHT, this);
+        g.drawImage(imageOutput6, 70 + WIDTH * 2, 50+HEIGHT, this);
 		//g.drawImage(imageOutput1, 30, 70+HEIGHT+HEIGHT, this);
 		//g.drawImage(imageOutput3, 30, 90+HEIGHT+HEIGHT+HEIGHT, this);
         //g.drawImage(imageOutput2, 30, 110+HEIGHT+HEIGHT+HEIGHT+HEIGHT, this);
