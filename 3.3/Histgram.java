@@ -72,9 +72,11 @@ public class Histgram extends Applet
 				if (count[value] > max) max = count[value] + 1;
 			}
 		}
-		canvas = new int[255 * max];
+        //set histgram height = HEIGHT * 2;
+		canvas = new int[255 * HEIGHT *2];
 		for (x = 0; x < 255; x ++){
-			for (y = count[x]; y>max-count[x]; y--)
+            int cap = (int)Math.round(count[x] * HEIGHT * 2 / max);
+			for (y = HEIGHT * 2 - cap; y < HEIGHT * 2; y++)
 			{
                 try{
 				canvas[x + y * 255] = 0xFF000000;
@@ -84,18 +86,18 @@ public class Histgram extends Applet
                 }
 			}
 		}
-        imageOutput = createImage(new MemoryImageSource(255, max, canvas, 0, 255));
+        imageOutput = createImage(new MemoryImageSource(255, HEIGHT * 2, canvas, 0, 255));
 	}
     public void init()
     {
-        loadImage("image.GIF");
+        loadImage("rits08.gif");
         hist();
         repaint();
     }
     public void paint(Graphics g)
     {
         g.drawImage(imageInput, 30, 30, this);
-        g.drawImage(imageOutput, 30, 50+HEIGHT, this);
+        g.drawImage(imageOutput, 30, 50 + HEIGHT, this);
     }
 }
 
